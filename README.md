@@ -6,7 +6,7 @@ Installation
 -----
 
 * REQUIREMENT
-  * [Python])(https://www.python.org/download/releases/)
+  * [Python](https://www.python.org/download/releases/)
   * [perl](https://www.perl.org)
   * [R](https://www.r-project.org)
   * [GATK](https://github.com/broadinstitute/gatk/releases)

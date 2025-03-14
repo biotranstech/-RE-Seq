@@ -70,3 +70,7 @@ optional arguments:
   -type_num TYPE_NUM, --type_num TYPE_NUM
                         padj or pval threshold value
 ```
+
+## Status tracking and restart
+
+The system displays the task progress and whether the task is running successfully. If the workflow interruption needs to be restarted, the system will automatically check the file, skip the completed task, and continue to execute from the breakpoint, improving work efficiency.

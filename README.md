@@ -1,6 +1,28 @@
 RE-Seq work flow
 =====
-RE-Seq is an automated workflow for analyzing RNA editing events, encompassing data quality control, alignment, acquisition of RNA editing information, multi-level statistical analysis of editing information, multi-level analysis of RNA editing events, relevant visualization analysis, and automatic report generation.
+RE-Seq is an automated workflow for analyzing RNA editing events, written using the python DAGflow package, encompassing data quality control, alignment, acquisition of RNA editing information, multi-level statistical analysis of editing information, multi-level analysis of RNA editing events, relevant visualization analysis, and automatic report generation.
+
+## Workflow file directory structure
+
+```
+├── all.py                    #Workflow Complete process
+├── dagflow                   #python DAGflow package
+├── report_noAS.html          #Report template
+├── report_RNA_edic.py        #Automated report generation scripts
+├── report_utils.py           #Report generating python modules
+├── REseq                     #RE-Seq python modules
+│   ├── common.py             #Public files handle python packages
+│   ├── config.py             #Process software configuration file
+│   ├── down_analysis.py      #RE-Seq downstream analysis module
+│   ├── gene_count.py         #RNA expression analysis module
+│   ├── qc_hista.py           #Quality control and comparison module
+│   ├── report_utils.py       #Report generating python modules
+│   └── work_bam_reseq.py     #Get the RNA editing information module
+├── scripts                   #Analysis script path
+├── template                  #html configuration file
+│   ├── asset                 #html related js ccs file
+│   └── images                #html related graphics files
+```
 
 Installation
 -----

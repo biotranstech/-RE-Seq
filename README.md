@@ -1,5 +1,10 @@
 RE-Seq work flow
 =====
+## RE-Seq overview
+
+### What is RNA editing
+RNA editing is a dynamic post-transcriptional modification with significant implications for gene regulation and disease mechanisms.
+### RE-Seq work flow introduction
 RE-Seq is an automated workflow for analyzing RNA editing events, written using the python DAGflow package, encompassing data quality control, alignment, acquisition of RNA editing information, multi-level statistical analysis of editing information, multi-level analysis of RNA editing events, relevant visualization analysis, and automatic report generation.
 
 ## Workflow file directory structure
@@ -27,15 +32,117 @@ RE-Seq is an automated workflow for analyzing RNA editing events, written using 
 Installation
 -----
 
-* REQUIREMENT
-  * [Python](https://www.python.org/download/releases/)
-  * [perl](https://www.perl.org)
-  * [R](https://www.r-project.org)
-  * [GATK](https://github.com/broadinstitute/gatk/releases)
+### Create and activate Python environment
+
+For RE-Seq, the python version need is over 3.8. If you have installed Python3.6 or Python3.7, consider installing Anaconda, and then you can create a new environment.
+```
+conda create -n reseq python=3.9
+conda activate scspace
+```
+
+### Install python package
+```
+conda install Jinja2
+conda install pandas
+conda install matplotlib
+```
+
+### Create and activate R environment
+For RE-Seq, the R version need 4.2.3. You can create a YAML file called environment.yml with the following content:
+```
+name: r_environment
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - r-base=4.2.3
+  - bioconda::bioconductor-annotationdbi
+  - r-corrplot
+  - r-coin
+  - bioconda::bioconductor-complexheatmap
+  - bioconda::bioconductor-clusterprofiler
+  - r-dplyr
+  - r-data.table
+  - r-foreach
+  - bioconda::bioconductor-deseq2
+  - r-doparallel
+  - bioconda::bioconductor-edger
+  - bioconda::bioconductor-enrichplot
+  - r-extrafont
+  - r-factoextra
+  - r-foreach
+  - r-fs
+  - r-glue
+  - conda-forge::r-gridextra
+  - r-gdata
+  - r-ggplot2
+  - r-ggcorrplot
+  - r-ggextra
+  - r-ggrepel
+  - r-igraph
+  - bioconda::bioconductor-limma
+  - bioconductor-org.hs.eg.db
+  - bioconductor-org.mm.eg.db
+  - bioconductor-org.rn.eg.db
+  - r-rmisc
+  - r-rcolorbrewer
+  - r-pheatmap
+  - bioconda::bioconductor-biocparallel
+  - r-pbapply
+  - bioconda::bioconductor-pathview
+  - r-patchwork
+  - r-statmod
+  - r-stringr
+  - r-tibble
+  - r-tidyr
+  - r-tidyverse
+  - r-reshape2
+  - fonts-anaconda
+  - pip:
+    - custom-functions
+```
+Go to the directory containing the environment.yml file and run the following command to create the environment:
+```
+conda env create -f environment.yml
+```
+
+### Install other requirements
+```
+conda install bioconda::fastp
+conda install bioconda::fastqc
+conda install bioconda::gatk4
+conda install conda-forge::perl
+conda install bioconda::hisat2
+conda install bioconda::samtools
+conda install bioconda::tabix
+conda install bioconda::htseq
+```
+### Install Annovar
+You can refer to the [Annovar](https://annovar.openbioinformatics.org/en/latest/user-guide/download/) official website to download and install.
+
+### Modify the flow configuration file
+
+When you have completed the installation of the above software (package), you need to modify the "REseq/config.py" file to change the corresponding software path to the path you installed.
+In "REseq/config.py" file, ref_* is reference genome information.for example:
+```
+ref_path = {"hg38": ".../Refer/hg38/hg38",
+                        "mm10": ".../Refer/mm10/mm10",
+                        "rn6":  ".../Refer/rn6/rn6"
+}
+ref_fasta = {"hg38": ".../Refer/hg38/hg38.fa",
+                        "mm10": ".../Refer/mm10/mm10.fa",
+                        "rn6":  ".../Refer/rn6/rn6.fa"
+}
+...
+```
 
 Usage
 -----
+### Help information
+You can enter a command to get the help message, which contains information about all the optional parameters.
+
 ```python
+python all.py -h 
 usage: all.py [-h] -i STR [-ref FILE] [--trim INT] [--qvalue INT] [-m FILE] [--thread INT] [--concurrent INT] [--refresh INT]<br>
               [--job_type {sge,local}] [--work_dir DIR] [--out_dir DIR] [-as {yes,no}] -cn CONTRACT -pn NAME [-type TYPE]<br>
               [-type_num TYPE_NUM]<br>
@@ -69,6 +176,25 @@ optional arguments:
                         padj or pval
   -type_num TYPE_NUM, --type_num TYPE_NUM
                         padj or pval threshold value
+```
+
+### Example
+You need to edit a "sample.xls" file with four columns of content, the first column is the sample ID, the second column is the absolute path of the sample reads R1 file, the third column is the absolute path of the sample reads R2 file, and the fourth column is the sample grouping information.
+"sample.xls" file example:
+```
+Rop-1   /home/data/jc1/ZQ-176/CG-1_L1_1.fq.gz   /home/data/jc1/ZQ-176/CG-1_L1_2.fq.gz   Rop
+Rop-2   /home/data/jc1/ZQ-176/CG-2_L1_1.fq.gz   /home/data/jc1/ZQ-176/CG-2_L1_2.fq.gz   Rop
+Rop-3   /home/data/jc1/ZQ-176/CG-3_L1_1.fq.gz   /home/data/jc1/ZQ-176/CG-3_L1_2.fq.gz   Rop
+Rop_Dex-1       /home/data/jc1/ZQ-176/EG-1_L1_1.fq.gz   /home/data/jc1/ZQ-176/EG-1_L1_2.fq.gz   Rop_Dex
+Rop_Dex-2       /home/data/jc1/ZQ-176/EG-2_L1_1.fq.gz   /home/data/jc1/ZQ-176/EG-2_L1_2.fq.gz   Rop_Dex
+Rop_Dex-3       /home/data/jc1/ZQ-176/EG-3_L1_1.fq.gz   /home/data/jc1/ZQ-176/EG-3_L1_2.fq.gz   Rop_Dex
+Control-1       /home/data/jc1/ZQ-176/NG-1_L1_1.fq.gz   /home/data/jc1/ZQ-176/NG-1_L1_2.fq.gz   Control
+Control-2       /home/data/jc1/ZQ-176/NG-2_L1_1.fq.gz   /home/data/jc1/ZQ-176/NG-2_L1_2.fq.gz   Control
+Control-3       /home/data/jc1/ZQ-176/NG-3_L1_1.fq.gz   /home/data/jc1/ZQ-176/NG-3_L1_2.fq.gz   Control
+```
+You can then perform RE-Seq analysis with the following command.
+```
+python you_path.all.py --work_dir ./01_work --out_dir ./02_Result -ref rn6 -i sample.xls -cn ZQ-176 -pn "Rattus norvegicus 9 RE-seq"
 ```
 
 ## Status tracking and restart

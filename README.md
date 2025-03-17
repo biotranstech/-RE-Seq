@@ -37,7 +37,7 @@ Installation
 For RE-Seq, the python version need is over 3.8. If you have installed Python3.6 or Python3.7, consider installing Anaconda, and then you can create a new environment.
 ```
 conda create -n reseq python=3.9
-conda activate scspace
+conda activate RESeq
 ```
 
 ### Install python package

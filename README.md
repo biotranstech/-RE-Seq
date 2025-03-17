@@ -4,7 +4,7 @@ RE-Seq work flow
 
 ### What is RNA editing
 RNA editing is a dynamic post-transcriptional modification with significant implications for gene regulation and disease mechanisms.
-### RE-Seq work flow introduction
+### Introduction
 RE-Seq is an automated workflow for analyzing RNA editing events, written using the python DAGflow package, encompassing data quality control, alignment, acquisition of RNA editing information, multi-level statistical analysis of editing information, multi-level analysis of RNA editing events, relevant visualization analysis, and automatic report generation.
 
 ## Workflow file directory structure
